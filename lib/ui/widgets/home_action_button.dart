@@ -18,20 +18,20 @@ class HomeActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: const Color(0xFF17171F),
-      borderRadius: BorderRadius.circular(22),
+      borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(16),
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           child: Row(
             children: [
               Icon(
                 icon,
-                size: 38,
+                size: 26,
                 color: const Color(0xFF00E676),
               ),
-              const SizedBox(width: 18),
+              const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,16 +39,16 @@ class HomeActionButton extends StatelessWidget {
                     Text(
                       title,
                       style: const TextStyle(
-                        fontSize: 21,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     Text(
                       subtitle,
                       style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.white60,
+                        fontSize: 12,
+                        color: Colors.white54,
                       ),
                     ),
                   ],
@@ -56,8 +56,8 @@ class HomeActionButton extends StatelessWidget {
               ),
               const Icon(
                 Icons.arrow_forward_ios_rounded,
-                size: 18,
-                color: Colors.white38,
+                size: 14,
+                color: Colors.white30,
               ),
             ],
           ),
