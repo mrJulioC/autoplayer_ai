@@ -62,16 +62,51 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  String _normalize(String text) {
+    return text
+        .toLowerCase()
+        .replaceAll('á', 'a')
+        .replaceAll('é', 'e')
+        .replaceAll('í', 'i')
+        .replaceAll('ó', 'o')
+        .replaceAll('ú', 'u')
+        .replaceAll('ü', 'u')
+        .replaceAll('ñ', 'n')
+        .trim();
+  }
+
   void _filterSongs() {
-    final query = _searchController.text.toLowerCase().trim();
+    final query = _normalize(_searchController.text);
 
     setState(() {
       _filteredSongs = query.isEmpty
           ? _songs
           : _songs.where((song) {
-              return song.title.toLowerCase().contains(query);
+              return _normalize(song.title).contains(query);
             }).toList();
     });
+  }
+
+  Future<void> _playFirstSearchResult() async {
+    if (_filteredSongs.isEmpty) return;
+
+    await _player.playSong(_filteredSongs.first);
+
+    _searchController.clear();
+
+    if (!mounted) return;
+
+    setState(() {
+      _filteredSongs = _songs;
+    });
+  }
+
+  Future<void> _stopAudio() async {
+    await _player.stop();
+
+    if (!mounted) return;
+
+    setState(() {});
   }
 
   @override
@@ -124,20 +159,52 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _searchBox() {
     return SizedBox(
-      height: 42,
-      child: TextField(
-        controller: _searchController,
-        style: const TextStyle(fontSize: 13),
-        decoration: InputDecoration(
-          prefixIcon: const Icon(Icons.search_rounded, size: 20),
-          hintText: '',
-          filled: true,
-          fillColor: const Color(0xFF17171F),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
-            borderSide: BorderSide.none,
+      height: 44,
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _searchController,
+              style: const TextStyle(fontSize: 13),
+              textInputAction: TextInputAction.search,
+              onSubmitted: (_) => _playFirstSearchResult(),
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search_rounded, size: 20),
+                hintText: '',
+                filled: true,
+                fillColor: const Color(0xFF17171F),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
           ),
-        ),
+          const SizedBox(width: 8),
+          ValueListenableBuilder<SongItem?>(
+            valueListenable: _player.currentSongNotifier,
+            builder: (context, song, _) {
+              if (song == null) return const SizedBox.shrink();
+
+              return SizedBox(
+                width: 42,
+                height: 42,
+                child: ElevatedButton(
+                  onPressed: _stopAudio,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.zero,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Icon(Icons.stop_rounded, size: 24),
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
