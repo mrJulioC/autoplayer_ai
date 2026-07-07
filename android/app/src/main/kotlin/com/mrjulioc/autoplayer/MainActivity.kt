@@ -1,4 +1,4 @@
-package com.example.autoplayer_ai
+package com.mrjulioc.autoplayer
 
 import io.flutter.embedding.android.FlutterActivity
 
